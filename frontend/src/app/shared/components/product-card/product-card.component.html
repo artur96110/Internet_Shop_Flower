@@ -1,6 +1,6 @@
 <div class="product-card" *ngIf="product" (click)="navigate()"
      [class.is-light]="isLight">
-  <div class="product-card-favorite" *ngIf="!isLight && isLogged" (click)="updateFavorite()">
+  <div class="product-card-favorite" *ngIf="!isLight && isLogged" (click)="updateFavorite(); $event.stopPropagation()">
 
     <span *ngIf="product.isInFavorite">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -16,7 +16,9 @@
     </span>
   </div>
 
-  <div class="product-card-image" style="background-image: url({{serverStaticPath + product.image}})"></div>
+  <div class="product-card-image"
+       [style.background-image]="'url(' + serverStaticPath + product.image + ')'">
+  </div>
 
   <div class="product-card-name">
     {{product.name}}
@@ -27,8 +29,8 @@
       {{product.price}} BYN
     </div>
     <div class="product-card-action">
-      <button class="button" *ngIf="!countInCart" (click)="addToCart()">В корзину</button>
-      <button class="button button-transparent button-in-cart" *ngIf="countInCart" (click)="removeFromCart()">
+      <button class="button" *ngIf="!countInCart" (click)="addToCart(); $event.stopPropagation()">В корзину</button>
+      <button class="button button-transparent button-in-cart" *ngIf="countInCart" (click)="removeFromCart(); $event.stopPropagation()">
         <span>В корзине</span>
         <span>Удалить</span>
       </button>
@@ -37,8 +39,14 @@
 
   <div class="product-card-extra" *ngIf="!isLight">
 
-    <count-selector [count]="count" (onCountChange)="updateCount($event)"></count-selector>
-    <a [routerLink]="'/product/' + product.url" class="product-card-detail">
+    <count-selector
+      [count]="count"
+      (click)="$event.stopPropagation()"
+      (onCountChange)="updateCount($event)">
+    </count-selector>
+    <a [routerLink]="'/product/' + product.url"
+       class="product-card-detail"
+       (click)="$event.stopPropagation()">
       <svg width="18" height="4" viewBox="0 0 18 4" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="2.66699" cy="2" r="2" fill="#9AA89B"/>
         <circle cx="9.33398" cy="2" r="2" fill="#9AA89B"/>

@@ -1,11 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FavoriteService} from "../../../shared/services/favorite.service";
 import {FavoriteType} from "../../../../types/favorite.type";
 import {DefaultResponseType} from "../../../../types/default-response.type";
 import {environment} from "../../../../environments/environment";
 import {CartType} from "../../../../types/cart.type";
 import {CartService} from "../../../shared/services/cart.service";
-import {ProductType} from "../../../../types/product.type";
 
 @Component({
   selector: 'app-favorite',
@@ -16,8 +15,6 @@ export class FavoriteComponent implements OnInit {
   products: FavoriteType[] = [];
   serverStaticPath = environment.serverStaticPath;
   productsInCart: CartType | null = null;
-  @Input() product!: ProductType;
-  @Input() countInCart: number | undefined = 0;
   count: number = 1;
 
   constructor(
@@ -86,7 +83,7 @@ export class FavoriteComponent implements OnInit {
 
   updateCount(id: string, value: number) {
     const product = this.products.find((product: FavoriteType) => product.id === id);
-    if (product && product.countInCart) {
+    if (product) {
       product.countInCart = value;
       this.cartService.updateCart(product.id, product.countInCart)
         .subscribe((data: CartType | DefaultResponseType) => {
@@ -110,6 +107,7 @@ export class FavoriteComponent implements OnInit {
         const productToRemove = this.products.find(product => product.id === id);
         if (productToRemove) {
           productToRemove.countInCart = 0;
+          productToRemove.inCart = false;
           this.count = 1;
         }
       });
