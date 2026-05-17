@@ -1,0 +1,100 @@
+@import "../../../../assets/styles/variables";
+@import "../../../../assets/styles/mixins";
+@import "../../../../assets/styles/personal";
+
+.orders {
+  padding-top: 50px;
+  padding-bottom: 156px;
+
+  .container {
+    font-size: 16px;
+
+    .orders-title {
+      color: $gray-text-color;
+      font-family: Montserrat, sans-serif;
+      font-style: normal;
+      font-weight: 500;
+      margin-bottom: 14px;
+    }
+
+    .orders-title-additional {
+      color: $gray-text-color;
+      margin-bottom: 67px;
+    }
+
+    .orders-empty {
+      margin-top: 20px;
+      margin-bottom: 100px;
+
+      div {
+        font-size: 16px;
+      }
+
+      .button {
+        width: 255px;
+        margin-top: 10px;
+      }
+    }
+
+    .orders-list {
+
+      .orders-list-item {
+        border-bottom: 1px solid #E7F1E8;
+        padding-bottom: 46px;
+        margin-bottom: 47px;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+
+        &:last-child {
+          border-bottom: 0;
+          padding-bottom: 0;
+          margin-bottom: 0;
+        }
+
+        .orders-list-item-number {
+          color: #111;
+          font-size: 20px;
+          text-decoration-line: underline;
+          width: 297px;
+          margin-right: 20px;
+        }
+
+        .orders-list-item-products {
+          width: 509px;
+          margin-right: 20px;
+          color: #ADADAD;
+
+          .orders-list-item-products-count {
+            margin-bottom: 12px;
+          }
+
+          .orders-list-item-products-list tr td:first-child {
+            padding-left: 10px;
+            padding-right: 20px;
+          }
+        }
+
+        .orders-list-item-status {
+          padding: 8px 24px;
+          text-align: center;
+          border-radius: 50px;
+          border: 1px solid #456F49;
+          box-sizing: border-box;
+          background: transparent;
+          color: #456F49;
+        }
+
+        .orders-list-item-price {
+          width: 186px;
+          text-align: right;
+          color: $gray-text-color;
+          font-family: Montserrat, sans-serif;
+          font-size: 22px;
+          font-style: normal;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}

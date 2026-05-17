@@ -1,0 +1,19 @@
+@import "variables";
+
+@mixin head-lora-32 {
+  font-family: Lora, sans-serif;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 130%;
+  color: $green-text-color;
+}
+
+@mixin head-lora-36 {
+  font-family: Lora, sans-serif;
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 130%;
+  color: #000000;
+}
