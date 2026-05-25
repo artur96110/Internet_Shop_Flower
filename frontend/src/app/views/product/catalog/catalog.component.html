@@ -20,8 +20,10 @@
         </div>
       </div>
 
-      <div class="catalog-sorting" [class.open]="sortingOpen" (click)="toggleSorting()">
-        <div class="catalog-sorting-head">
+      <div class="catalog-sorting"
+           [class.open]="sortingOpen"
+           (click)="$event.stopPropagation()">
+        <div class="catalog-sorting-head" (click)="toggleSorting($event)">
           <span>Сортировать</span>
           <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
@@ -32,9 +34,10 @@
 
         <div class="catalog-sorting-body">
           <div class="catalog-sorting-item"
-               [class.active]="this.activeParams.sort ? this.activeParams.sort === sortingOption.value : false"
-               (click)="sort(sortingOption.value)"
-               *ngFor="let sortingOption of sortingOptions">{{ sortingOption.name }}
+               [class.active]="activeParams.sort ? activeParams.sort === sortingOption.value : false"
+               (click)="sort(sortingOption.value); $event.stopPropagation()"
+               *ngFor="let sortingOption of sortingOptions">
+            {{ sortingOption.name }}
           </div>
         </div>
       </div>

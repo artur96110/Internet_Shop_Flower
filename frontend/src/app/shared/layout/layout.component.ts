@@ -5,6 +5,7 @@ import {CategoryWithTypeType} from "../../../types/category-with-type.type";
 @Component({
   selector: 'app-layout',
   templateUrl: './layout.component.html',
+  styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent implements OnInit {
   categories: CategoryWithTypeType[] = [];
@@ -16,9 +17,8 @@ export class LayoutComponent implements OnInit {
     this.categoryService.getCategoriesWithTypes()
       .subscribe((categories: CategoryWithTypeType[]) => {
         this.categories = categories.map(item => {
-          return Object.assign({typesUrl: item.types.map(item => item.url)}, item)
+          return Object.assign({typesUrl: item.types.map(item => item.url)}, item);
         });
       });
   }
-
 }

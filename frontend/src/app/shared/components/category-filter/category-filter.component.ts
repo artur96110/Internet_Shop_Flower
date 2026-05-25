@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnDestroy, OnInit} from '@angular/core';
 import {CategoryWithTypeType} from "../../../../types/category-with-type.type";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ActiveParamsType} from "../../../../types/active-params.type";
@@ -9,14 +9,23 @@ import {ActiveParamsUtil} from "../../utils/active-params.util";
   templateUrl: './category-filter.component.html',
   styleUrls: ['./category-filter.component.scss']
 })
-export class CategoryFilterComponent implements OnInit {
+export class CategoryFilterComponent implements OnInit, OnDestroy {
 
   @Input() categoryWithTypes: CategoryWithTypeType | null = null;
   @Input() type: string | null = null;
+
   public open = false;
   activeParams: ActiveParamsType = {types: []};
   from: number | null = null;
   to: number | null = null;
+
+  private documentClickHandler = (event: MouseEvent): void => {
+    const clickedInside = this.elementRef.nativeElement.contains(event.target);
+
+    if (!clickedInside) {
+      this.open = false;
+    }
+  };
 
   get title(): string {
     if (this.categoryWithTypes) {
@@ -28,15 +37,20 @@ export class CategoryFilterComponent implements OnInit {
         return 'Диаметр';
       }
     }
+
     return '';
   }
 
-  constructor(private router: Router,
-              private activatedRoute: ActivatedRoute,
+  constructor(
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private elementRef: ElementRef,
   ) {
   }
 
   ngOnInit(): void {
+    document.addEventListener('click', this.documentClickHandler, true);
+
     this.activatedRoute.queryParams.subscribe(params => {
       this.activeParams = ActiveParamsUtil.processParams(params);
 
@@ -55,48 +69,60 @@ export class CategoryFilterComponent implements OnInit {
           this.activeParams.types = Array.isArray(params['types']) ? params['types'] : [params['types']];
         }
 
-        if (this.categoryWithTypes && this.categoryWithTypes.types &&
+        if (
+          this.categoryWithTypes &&
+          this.categoryWithTypes.types &&
           this.categoryWithTypes.types.length > 0 &&
-          this.categoryWithTypes.types.some(type => this.activeParams.types.find(item => type.url === item))) {
+          this.categoryWithTypes.types.some(type => this.activeParams.types.find(item => type.url === item))
+        ) {
           this.open = true;
         }
       }
     });
   }
 
-  toggle(): void {
+  ngOnDestroy(): void {
+    document.removeEventListener('click', this.documentClickHandler, true);
+  }
+
+  toggle(event: Event): void {
+    event.stopPropagation();
     this.open = !this.open;
   }
 
-  updateFilterParams(url: string, checked: boolean) {
+  updateFilterParams(url: string, checked: boolean): void {
     if (this.activeParams.types && this.activeParams.types.length > 0) {
       const existingTypeInParams = this.activeParams.types.find(item => item === url);
+
       if (existingTypeInParams && !checked) {
         this.activeParams.types = this.activeParams.types.filter(item => item !== url);
       } else if (!existingTypeInParams && checked) {
-        this.activeParams.types = [...this.activeParams.types, url]
+        this.activeParams.types = [...this.activeParams.types, url];
       }
     } else if (checked) {
       this.activeParams.types = [url];
     }
+
     this.activeParams.page = 1;
+
     this.router.navigate(['/catalog/'], {
       queryParams: this.activeParams
     });
   }
 
-  updateFilterParamFromTo(param: string, value: string) {
+  updateFilterParamFromTo(param: string, value: string): void {
     if (param === 'heightTo' || param === 'heightFrom' || param === 'diameterTo' || param === 'diameterFrom') {
       if (this.activeParams[param] && !value) {
         delete this.activeParams[param];
       } else {
         this.activeParams[param] = value;
       }
+
       this.activeParams.page = 1;
+
       this.router.navigate(['/catalog/'], {
         queryParams: this.activeParams
       });
     }
   }
-
 }

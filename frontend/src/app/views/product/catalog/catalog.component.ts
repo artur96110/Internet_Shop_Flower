@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {ProductService} from "../../../shared/services/product.service";
 import {ProductType} from "../../../../types/product.type";
 import {CategoryService} from "../../../shared/services/category.service";
@@ -56,21 +56,20 @@ export class CatalogComponent implements OnInit {
 
         if (this.authService.getIsLoggedIn()) {
           this.favoriteService.getFavorites()
-            .subscribe(
-              {
-                next: (data: FavoriteType[] | DefaultResponseType) => {
-                  if ((data as DefaultResponseType).error !== undefined) {
-                    const error = (data as DefaultResponseType).message;
-                    this.processCatalog();
-                    throw new Error(error);
-                  }
-                  this.favoriteProducts = data as FavoriteType[];
+            .subscribe({
+              next: (data: FavoriteType[] | DefaultResponseType) => {
+                if ((data as DefaultResponseType).error !== undefined) {
+                  const error = (data as DefaultResponseType).message;
                   this.processCatalog();
-                },
-                error: (error) => {
-                  this.processCatalog();
+                  throw new Error(error);
                 }
-              });
+                this.favoriteProducts = data as FavoriteType[];
+                this.processCatalog();
+              },
+              error: () => {
+                this.processCatalog();
+              }
+            });
         } else {
           this.processCatalog();
         }
@@ -135,7 +134,7 @@ export class CatalogComponent implements OnInit {
                     if (this.cart) {
                       const productInCart = this.cart.items.find(item => item.product.id === product.id);
                       if (productInCart) {
-                        product.countInCart = productInCart.quantity
+                        product.countInCart = productInCart.quantity;
                       }
                     }
                     return product;
@@ -171,12 +170,15 @@ export class CatalogComponent implements OnInit {
     });
   }
 
-  toggleSorting() {
+  toggleSorting(event: Event): void {
+    event.stopPropagation();
     this.sortingOpen = !this.sortingOpen;
   }
 
-  sort(value: string) {
+  sort(value: string): void {
     this.activeParams.sort = value;
+    this.sortingOpen = false;
+
     this.router.navigate(['/catalog/'], {
       queryParams: this.activeParams
     });
@@ -190,22 +192,29 @@ export class CatalogComponent implements OnInit {
   }
 
   openPrevPage() {
-    if (this.activeParams.page && this.activeParams.page > 1) {
-      this.activeParams.page--;
+    const currentPage = this.activeParams.page ? +this.activeParams.page : 1;
+
+    if (currentPage > 1) {
+      this.activeParams.page = currentPage - 1;
       this.router.navigate(['/catalog/'], {
         queryParams: this.activeParams
-      })
+      });
     }
   }
 
   openNextPage() {
-    if (this.activeParams.page && this.activeParams.page < this.pages.length) {
-      this.activeParams.page++;
+    const currentPage = this.activeParams.page ? +this.activeParams.page : 1;
+
+    if (currentPage < this.pages.length) {
+      this.activeParams.page = currentPage + 1;
       this.router.navigate(['/catalog/'], {
         queryParams: this.activeParams
-      })
+      });
     }
   }
 
-
+  @HostListener('document:click')
+  closeSorting(): void {
+    this.sortingOpen = false;
+  }
 }
